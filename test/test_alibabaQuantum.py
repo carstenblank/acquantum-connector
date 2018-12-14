@@ -17,6 +17,7 @@ class TestAlibabaQuantum(TestCase):
     def setUpClass(cls):
         cls.api = AlibabaQuantum()
         cls.api.create_session(AcCredentials('sebboer', 'qnpwzHyIIFw33Nw2PBx'))
+        cls.api.save_session()
 
     @classmethod
     def tearDownClass(cls):
