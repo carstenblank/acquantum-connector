@@ -1,10 +1,12 @@
 # from json import JSONDecodeError
-import re
 import sys
 import time
+
+import re
 from unittest import TestCase
 
 from Gates import *
+from Model import AcRequestForbiddenError, AcRequestError
 from alibabaQuantum import AlibabaQuantum, AcCredentials, AcExperimentType
 
 
@@ -27,19 +29,15 @@ class TestAlibabaQuantum(TestCase):
         self._delete_all_experiments()
 
     def _delete_all_experiments(self):
-        res = self.api.get_experiments()
-        self.assertEqual(res.status_code, 200)
         try:
-            res = res.json()
-        except Exception:
+            res = self.api.get_experiments()
+        except AcRequestForbiddenError:
             self.api.reconnect_session()
             res = self.api.get_experiments()
-            res = res.json()
 
-        exp_ids = [exp['experimentId'] for exp in res['data']]
+        exp_ids = [exp.experiment_id for exp in res]
         for id in exp_ids:
-            response = self.api.delete_experiment(id)
-            self.assertEqual(response.status_code, 200)
+            self.api.delete_experiment(id)
 
     def test_create_session(self):
         self.api.create_session(AcCredentials('sebboer', 'qnpwzHyIIFw33Nw2PBx'))
@@ -51,11 +49,11 @@ class TestAlibabaQuantum(TestCase):
         self.api.load_session()
 
     def test_create_experiment(self):
-        response = self.api.create_experiment(11, AcExperimentType.SIMULATE, 'UnitTesting')
-        self.assertEqual(response.status_code, 200)
-        json = response.json()
-        self.assertTrue(json['success'])
-        self.assertTrue(type(json['data'] is int))
+        try:
+            exp_id = self.api.create_experiment(11, AcExperimentType.SIMULATE, 'UnitTesting')
+            self.assertTrue(type(exp_id) is int)
+        except AcRequestError as e:
+            self.fail(e)
 
     def test_update_experiment(self):
         experiment_id = self._create_experiment()
@@ -63,55 +61,51 @@ class TestAlibabaQuantum(TestCase):
         g_dict = {}
         for gate in gates:
             g_dict[gate.text] = gate
-        response = self.api.update_experiment(experiment_id, gates)
-
-        self.assertEqual(response.status_code, 200)
+        try:
+            self.api.update_experiment(experiment_id, gates)
+        except AcRequestError as e:
+            self.fail(e)
 
         response = self.api.get_experiment(experiment_id)
-        response = response.json()
-        res_gates = response['data']['data']
+        res_gates = response.data
         for g in res_gates:
             self.assertEqual(g['text'], g_dict[g['text']].text)
             self.assertEqual(g['x'], g_dict[g['text']].x)
             self.assertEqual(g['y'], g_dict[g['text']].y)
 
     def _create_experiment(self, bit_width=11, exp_type=AcExperimentType.SIMULATE, name='UnitTesting'):
-        # type: (int, str, str) -> str
+        # type: (int, str, str) -> int
 
         response = self.api.create_experiment(bit_width, exp_type, name)
-        json = response.json()
-        return str(json['data'])
+        return response
 
     def _create_experiment_with_gates(self, gates, bit_width=11, exp_type=AcExperimentType.SIMULATE,
                                       name='UnitTesting'):
-        # type: ([Gate], int, str, str) -> str
+        # type: ([Gate], int, str, str) -> int
 
         experiment_id = self._create_experiment(bit_width, exp_type, name)
         self.api.update_experiment(experiment_id, gates)
-        return str(experiment_id)
+        return experiment_id
 
     def test_get_experiment(self):
         experiment_id = self._create_experiment()
-        response = self.api.get_experiment(experiment_id)
-        self.assertEqual(response.status_code, 200)
-        body = response.json()
-        data = body['data']
-        self.assertEqual(data['experimentName'], 'UnitTesting')
-        self.assertEqual(data['experimentType'], 'SIMULATE')
-        self.assertEqual(data['bitWidth'], 11)
+        try:
+            experiment = self.api.get_experiment(experiment_id)
+            self.assertEqual(experiment.detail.name, 'UnitTesting')
+            self.assertEqual(experiment.detail.experiment_type, 'SIMULATE')
+            self.assertEqual(experiment.detail.bit_width, 11)
+        except AcRequestError as e:
+            self.fail(e)
 
     def test_get_experiment_with_gate(self):
         gates = [YGate(1, 1), XGate(2, 2)]
         experiment_id = self._create_experiment_with_gates(gates)
 
-        response = self.api.get_experiment(experiment_id)
-        self.assertEqual(response.status_code, 200)
-        body = response.json()
-        data = body['data']
-        self.assertEqual(data['experimentName'], 'UnitTesting')
-        self.assertEqual(data['experimentType'], 'SIMULATE')
-        self.assertEqual(data['bitWidth'], 11)
-        body_gates = data['data']
+        experiment = self.api.get_experiment(experiment_id)
+        self.assertEqual(experiment.detail.name, 'UnitTesting')
+        self.assertEqual(experiment.detail.experiment_type, 'SIMULATE')
+        self.assertEqual(experiment.detail.bit_width, 11)
+        body_gates = experiment.data
         self.assertEqual(len(body_gates), 2)
         self.assertEqual(body_gates[0]['text'], 'Y')
         self.assertEqual(body_gates[0]['x'], 1)
@@ -126,47 +120,37 @@ class TestAlibabaQuantum(TestCase):
             name = 'UnitTesting{}'.format(i)
             bit_width = 11 + i
             exp_id.append(self._create_experiment(bit_width=bit_width, name=name))
-        response = self.api.get_experiments()
-        self.assertEqual(response.status_code, 200)
-        body = response.json()
-        self.assertTrue(body['success'])
-        data = body['data']
-        self.assertEqual(data[0]['name'], 'UnitTesting2')
-        self.assertEqual(data[1]['name'], 'UnitTesting1')
-        self.assertEqual(data[2]['name'], 'UnitTesting0')
+        experiments = self.api.get_experiments()
+        self.assertEqual(experiments[0].name, 'UnitTesting2')
+        self.assertEqual(experiments[1].name, 'UnitTesting1')
+        self.assertEqual(experiments[2].name, 'UnitTesting0')
 
     def test_get_result_real(self):
         gates = [XGate(1, 1), YGate(2, 2), Measure(1, 2)]
         experiment_id = self._create_experiment_with_gates(gates)
-        self.assertEqual(
-            self.api.run_experiment(experiment_id, AcExperimentType.REAL, bit_width=4, shots=100).status_code, 200)
+        self.api.run_experiment(experiment_id, AcExperimentType.REAL, bit_width=4, shots=100)
 
         time.sleep(1)
-        response = self.api.get_result(experiment_id)
-        self.assertEqual(response.status_code, 200)
-        body = response.json()
-        real_result = body['data']['realResult'][0]
-        self.assertIsNotNone(real_result['startTime'])
-        if real_result['process']:
-            self.assertIsNone(real_result['finishTime'])
+        results = self.api.get_result(experiment_id)
+        self.assertIsNotNone(results.real_result[0])
+        real_result = results.real_result[0]
+        if real_result:
+            self.assertIsNone(real_result.finish_time)
         else:
-            self.assertIsNotNone(real_result['finishTime'])
-            self.assertIsNotNone(real_result['process'])
+            self.assertIsNotNone(real_result.finish_time)
+            self.assertIsNotNone(real_result.process)
 
     def test_get_result_simulated(self):
         gates = [XGate(1, 1), YGate(2, 2), Measure(1, 2)]
         experiment_id = self._create_experiment_with_gates(gates)
-        self.assertEqual(
-            self.api.run_experiment(experiment_id, AcExperimentType.SIMULATE, bit_width=11, shots=100).status_code, 200)
+        self.api.run_experiment(experiment_id, AcExperimentType.SIMULATE, bit_width=11, shots=100)
 
         time.sleep(1)
-        response = self.api.get_result(experiment_id)
-        self.assertEqual(response.status_code, 200)
-        body = response.json()
-        simulate_result = body['data']['simulateResult'][0]
-        self.assertIsNotNone(simulate_result['startTime'])
-        self.assertIsNotNone(simulate_result['finishTime'])
-        self.assertIsNotNone(simulate_result['data'])
+        results = self.api.get_result(experiment_id)
+        simulate_result = results.simulated_result[0]
+        self.assertIsNotNone(simulate_result.start_time)
+        self.assertIsNotNone(simulate_result.finish_time)
+        self.assertIsNotNone(simulate_result.data)
 
     def test_download_result(self):
         pass
@@ -174,11 +158,10 @@ class TestAlibabaQuantum(TestCase):
     def test_run_experiment(self):
         gates = [XGate(1, 1), YGate(2, 2), Measure(1, 2)]
         experiment_id = self._create_experiment_with_gates(gates)
-        response = self.api.run_experiment(experiment_id, AcExperimentType.SIMULATE, bit_width=11, shots=100)
-        self.assertEqual(response.status_code, 200)
-        body = response.json()
-        self.assertTrue(body['success'])
-        self.assertEqual(body['data'], 'success')
+        try:
+            self.api.run_experiment(experiment_id, AcExperimentType.SIMULATE, bit_width=11, shots=100)
+        except AcRequestError as e:
+            self.fail(e)
 
     def test__request_csrf_token(self):
         token = self.api._request_csrf_token()
@@ -188,14 +171,20 @@ class TestAlibabaQuantum(TestCase):
             self.assertRegexpMatches(token, re.compile('[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}?'))
 
     def test_delete_experiment(self):
-        created = self.api.create_experiment(11, AcExperimentType.SIMULATE, 'UniTestingDelete').json()
-        experiment_id = created['data']
-        response = self.api.delete_experiment(experiment_id)
-        self.assertEqual(response.status_code, 200)
+        experiment_id = self._create_experiment()
+        try:
+            self.api.delete_experiment(experiment_id)
+        except AcRequestError as e:
+            self.fail(e)
 
     def test_delete_all_experiments(self):
-        res = self.api.get_experiments().json()
-        exp_ids = [exp['experimentId'] for exp in res['data']]
-        for id in exp_ids:
-            response = self.api.delete_experiment(id)
-            self.assertEqual(response.status_code, 200)
+        exp_id = []
+        for i in range(3):
+            name = 'UnitTesting{}'.format(i)
+            bit_width = 11 + i
+            exp_id.append(self._create_experiment(bit_width=bit_width, name=name))
+        for id in exp_id:
+            try:
+                self.api.delete_experiment(id)
+            except AcRequestError as e:
+                self.fail(e)
