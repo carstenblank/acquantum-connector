@@ -46,7 +46,13 @@ class TestAlibabaQuantum(TestCase):
         self.api.save_session()
 
     def test_load_session(self):
-        self.api.load_session()
+        self.api.save_session()
+        csrf = self.api._session.csrf
+        cookies = self.api._session.cookies
+        self.api = AlibabaQuantum()
+        self.api.load_session(AcCredentials('sebboer', 'qnpwzHyIIFw33Nw2PBx'))
+        self.assertEqual(self.api._session.csrf, csrf)
+        self.assertEqual(self.api._session.cookies, cookies)
 
     def test_create_experiment(self):
         try:

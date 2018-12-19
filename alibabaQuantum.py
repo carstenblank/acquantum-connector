@@ -31,6 +31,10 @@ class AcSession(object):
         self.cookies = cookies
         self.credentials = credentials
 
+    def save(self):
+        # type: () -> (str, Any)
+        return self.csrf, self.cookies
+
     def __str__(self):
         # type: () -> str
 
@@ -68,12 +72,14 @@ class AlibabaQuantum(object):
         # type: () -> None
         with open('session', 'wb') as f:
             self._session.cookies = self._req.cookies
-            pickle.dump(self._session, f)
+            pickle.dump(self._session.save(), f)
 
-    def load_session(self):
-        # type: () -> None
+    def load_session(self, credentials):
+        # type: (AcCredentials) -> None
         with open('session', 'rb') as f:
-            self._session = pickle.load(f)
+            # self._session = pickle.load(f)
+            session = pickle.load(f)
+            self._session = AcSession(session[0], session[1], credentials)
             self._req.cookies.update(self._session.cookies)
 
     def _login(self):
