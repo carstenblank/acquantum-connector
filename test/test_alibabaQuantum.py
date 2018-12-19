@@ -2,11 +2,12 @@ import sys
 import time
 
 import re
+from os import listdir, remove
 from unittest import TestCase
 
-from Gates import *
-from Model import AcRequestForbiddenError, AcRequestError
 from alibabaQuantum import AlibabaQuantum, AcCredentials, AcExperimentType
+from model.Gates import *
+from model.Model import AcRequestForbiddenError, AcRequestError
 
 
 class TestAlibabaQuantum(TestCase):
@@ -16,11 +17,12 @@ class TestAlibabaQuantum(TestCase):
     def setUpClass(cls):
         cls.api = AlibabaQuantum()
         cls.api.create_session(AcCredentials('sebboer', 'qnpwzHyIIFw33Nw2PBx'))
-        cls.api.save_session()
 
     @classmethod
     def tearDownClass(cls):
-        cls.api.save_session()
+        for filename in listdir('.'):
+            if filename.endswith('.xls') or file == 'session':
+                remove(filename)
 
     def setUp(self):
         self._delete_all_experiments()
