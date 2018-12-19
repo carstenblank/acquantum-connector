@@ -4,7 +4,7 @@ import requests
 from typing import List, Any
 
 from Gates import Gate
-from Model import AcResponse, AcErrorResponse, AcExperiment, AcExperimentDetail, AcRequestError, \
+from Model import AcResponse, AcExperiment, AcExperimentDetail, AcRequestError, \
     AcRequestForbiddenError, AcResult, AcResultResponse
 
 
@@ -122,7 +122,7 @@ class AlibabaQuantum(object):
         self.handle_ac_response(self._req.post(uri, json=payload, params=params, headers=headers))
 
     def get_experiment(self, experiment_id):
-        # type: (int) -> AcExperiment or AcErrorResponse
+        # type: (int) -> AcExperiment
         uri = '{}/experiment/detail'.format(self._base_uri)
         params = {
             'experimentId': experiment_id,
@@ -138,7 +138,7 @@ class AlibabaQuantum(object):
         return experiment
 
     def get_experiments(self):
-        # type: () -> [AcExperimentDetail] or AcErrorResponse
+        # type: () -> [AcExperimentDetail]
         uri = '{}/experiment/list'.format(self._base_uri)
         params = {
             self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1]

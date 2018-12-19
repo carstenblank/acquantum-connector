@@ -40,24 +40,6 @@ class AcResponse:
         return 'AcResponse: {{ success: {}, exception: {} }}'.format(self.success, self.exception)
 
 
-class AcErrorResponse(object, AcResponse):
-
-    def __init__(self, success=False, exception=None, status_code=None):
-        # type: (bool, Any, int) -> None
-        super(AcErrorResponse, self).__init__()
-        self.status_code = status_code
-        self.success = success
-        self.exception = exception
-
-    def __str__(self):
-        return 'AcErrorResponse: {{ success: {}, exception: {}, status_code: {} }}'.format(self.success, self.exception,
-                                                                                           self.status_code)
-
-    def __repr__(self):
-        return 'AcErrorResponse: {{ success: {}, exception: {}, status_code: {} }}'.format(self.success, self.exception,
-                                                                                           self.status_code)
-
-
 class AcExperimentDetail:
 
     def __init__(self, name, version, experiment_id, experiment_type, execution, bit_width=None):
