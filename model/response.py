@@ -1,34 +1,9 @@
 from typing import Any
 
 
-class AcRequestError(Exception):
-    def __init__(self, message, status_code=None):
-        # type: (str, int) -> None
-        self.status_code = status_code
-        self.message = message
-
-    def __str__(self):
-        return 'AcRequestError: \'{}\''.format(self.message)
-
-    def __repr__(self):
-        return 'AcRequestError: \'{}\''.format(self.message)
-
-
-class AcRequestForbiddenError(AcRequestError):
-    def __init__(self, message='403 Forbidden'):
-        # type: (str) -> None
-        self.message = message
-
-    def __str__(self):
-        return '403 - AcRequestForbiddenError: \'{}\''.format(self.message)
-
-    def __repr__(self):
-        return '403 - AcRequestForbiddenError: \'{}\''.format(self.message)
-
-
-class AcResponse:
+class AcQuantumResponse(object):
     def __init__(self, success=True, data=None, exception=None):
-        # type: (bool,Any, Any) -> None
+        # type: (bool, Any, Any) -> None
         self.success = success
         self.data = data
         self.exception = exception
@@ -40,10 +15,28 @@ class AcResponse:
         return 'AcResponse: {{ success: {}, exception: {} }}'.format(self.success, self.exception)
 
 
-class AcExperimentDetail:
+class AcQuantumErrorResponse(AcQuantumResponse):
+
+    def __init__(self, success=False, exception=None, status_code=None):
+        # type: (bool, Any, int) -> None
+        super(AcQuantumErrorResponse, self).__init__()
+        self.status_code = status_code
+        self.success = success
+        self.exception = exception
+
+    def __str__(self):
+        return 'AcErrorResponse: {{ success: {}, exception: {}, status_code: {} }}'.format(self.success, self.exception,
+                                                                                           self.status_code)
+
+    def __repr__(self):
+        return 'AcErrorResponse: {{ success: {}, exception: {}, status_code: {} }}'.format(self.success, self.exception,
+                                                                                           self.status_code)
+
+
+class AcQuantumExperimentDetail:
 
     def __init__(self, name, version, experiment_id, experiment_type, execution, bit_width=None):
-        # type: (str, int, int, str, int, int) -> None
+        # type: (str, int, int, 'AcQuantumBackendType', int, int) -> None
         self.name = name
         self.version = version
         self.experiment_id = experiment_id
@@ -62,10 +55,10 @@ class AcExperimentDetail:
             .format(self.name, self.version, self.experiment_id, self.experiment_type, self.execution, self.bit_width)
 
 
-class AcExperiment:
+class AcQuantumExperiment:
 
     def __init__(self, detail, data, code=''):
-        # type: (AcExperimentDetail, Any, str) -> None
+        # type: (AcQuantumExperimentDetail, Any, str) -> None
         self.detail = detail
         self.data = data
         self.code = code
@@ -77,21 +70,21 @@ class AcExperiment:
         return 'AcExperiment: {{ data: {}, code: {}, detail: {} }}'.format(self.data, self.code, self.detail)
 
 
-class AcResultResponse:
+class AcQuantumResultResponse:
 
     def __init__(self, simulated_result=None, real_result=None):
-        # type: ([AcResult], [AcResult]) -> None
+        # type: ([AcQuantumResult], [AcQuantumResult]) -> None
         self.simulated_result = simulated_result
         self.real_result = real_result
 
     def get_result(self):
-        # type: () -> [AcResult] or ([AcResult], [AcResult])
+        # type: () -> AcQuantumResult or (AcQuantumResult, AcQuantumResult)
         if self.simulated_result:
             if self.real_result:
                 return self.real_result, self.simulated_result
-            return self.simulated_result
+            return self.simulated_result[0]
         else:
-            return self.real_result
+            return self.real_result[0]
 
     def __str__(self):
         return 'AcResultResponse {{ simulated_result: {}, real_result: {} }}'.format(self.simulated_result,
@@ -102,7 +95,7 @@ class AcResultResponse:
                                                                                      self.real_result)
 
 
-class AcResult:
+class AcQuantumResult:
 
     def __init__(self, result_id, seed, shots, start_time, measure_qubits, finish_time=None, process=None, data=None,
                  exception=None):

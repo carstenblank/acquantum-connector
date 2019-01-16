@@ -1,89 +1,71 @@
 import pickle
 import re
+from typing import Any
+
 import requests
-from typing import List, Any
 
-from Gates import Gate
-from Model import AcResponse, AcExperiment, AcExperimentDetail, AcRequestError, \
-    AcRequestForbiddenError, AcResult, AcResultResponse
-
-
-class AcExperimentType(object):
-    SIMULATE = 'SIMULATE'
-    REAL = 'REAL'
+from credentials.credentials import AcQuantumCredentials
+from model.backendtype import AcQuantumBackendType
+from model.config import AcQuantumRawConfig
+from model.errors import AcQuantumRequestError, AcQuantumRequestForbiddenError
+from model.gates import Gate
+from model.response import AcQuantumResponse, AcQuantumExperimentDetail, AcQuantumResult, AcQuantumResultResponse, \
+    AcQuantumExperiment
 
 
-class AcCredentials(object):
-
-    def __init__(self, user_name, password):
-        # type: (str, str) -> None
-
-        self.user_name = user_name
-        self.password = password
-
-
-class AcSession(object):
+class AcQuantumSession(object):
 
     def __init__(self, csrf, cookies, credentials):
-        # type: (str, Any, AcCredentials) -> None
+        # type: (str, Any, AcQuantumCredentials) -> None
 
         self.csrf = csrf
         self.cookies = cookies
         self.credentials = credentials
 
-    def save(self):
-        # type: () -> (str, Any)
-        return self.csrf, self.cookies
-
     def __str__(self):
         # type: () -> str
-
         return 'AcSession: [cookies: {}, csrf: {}]'.format(self.cookies, self.csrf)
 
 
-class AlibabaQuantum(object):
+class AcQuantumConnector(object):
     _schema = 'http'
     _base_uri = '{}://quantumcomputer.ac.cn'.format(_schema)
     _CHARSET_PARAM = ('_input_charset', 'utf-8')
     _TOKEN_HEADER_KEY = 'X-CSRF-TOKEN'
 
     def __init__(self):
-        # type: () -> None
-        self._req = requests.session()  # type: requests.Session
-        self._credentials = None  # type: AcCredentials
-        self._session = None  # type: AcSession
+        self._req = requests.session()
+        self._credentials = None
+        self._session = None
 
     def create_session(self, credentials):
-        # type: (AcCredentials) -> None
+        # type: (AcQuantumCredentials) -> None
+
         self._credentials = credentials
         csrf = self._request_csrf_token()
         cookies = self._req.cookies
-        self._session = AcSession(csrf, cookies, credentials)
+        self._session = AcQuantumSession(csrf, cookies, credentials)
         response = self._login().json()
         if not response['success']:
             raise Exception('Connection refused: {}'.format(response['message']))
 
     def reconnect_session(self):
-        # type: () -> None
         print('... reconnecting session')
         self.create_session(self._credentials)
 
     def save_session(self):
-        # type: () -> None
         with open('session', 'wb') as f:
             self._session.cookies = self._req.cookies
-            pickle.dump(self._session.save(), f)
+            pickle.dump(self._session, f)
 
-    def load_session(self, credentials):
-        # type: (AcCredentials) -> None
+    def load_session(self):
         with open('session', 'rb') as f:
-            # self._session = pickle.load(f)
-            session = pickle.load(f)
-            self._session = AcSession(session[0], session[1], credentials)
+            self._session = pickle.load(f)
             self._req.cookies.update(self._session.cookies)
 
     def _login(self):
         # type: () -> requests.Response
+
         uri = '{}/login'.format(self._base_uri)
         params = {'_input_charset': 'utf-8'}
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -96,20 +78,22 @@ class AlibabaQuantum(object):
         return self._req.post(uri, data=payload, params=params, headers=headers)
 
     def create_experiment(self, bit_width, experiment_type, experiment_name):
-        # type: (int, str, str) -> int
+        # type: (int, AcQuantumBackendType, str) -> int
+
         uri = '{}/experiment/infosave'.format(self._base_uri)
         params = {self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1]}
         headers = {self._TOKEN_HEADER_KEY: self._session.csrf, 'Content-Type': 'application/json'}
         payload = {
             'bitWidth': bit_width,
-            'type': experiment_type,
+            'type': experiment_type.name,
             'name': experiment_name
         }
         response = self.handle_ac_response(self._req.post(uri, params=params, headers=headers, json=payload))
         return response.data
 
     def update_experiment(self, experiment_id, gates, code=None, override=True):
-        # type: (int, List[Gate], str, bool) -> None
+        # type: (int, [Gate], str, bool) -> None
+
         uri = '{}/experiment/codesave'.format(self._base_uri)
         params = {
             self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1]
@@ -128,7 +112,8 @@ class AlibabaQuantum(object):
         self.handle_ac_response(self._req.post(uri, json=payload, params=params, headers=headers))
 
     def get_experiment(self, experiment_id):
-        # type: (int) -> AcExperiment
+        # type: (int) -> AcQuantumExperiment
+
         uri = '{}/experiment/detail'.format(self._base_uri)
         params = {
             'experimentId': experiment_id,
@@ -138,13 +123,14 @@ class AlibabaQuantum(object):
 
         response = self.handle_ac_response(self._req.get(uri, params=params, headers=headers))
         body = response.data
-        exp_detail = AcExperimentDetail(body['experimentName'], body['version'], int(experiment_id),
-                                        body['experimentType'], body['execution'], bit_width=body['bitWidth'])
-        experiment = AcExperiment(detail=exp_detail, data=body['data'], code=body['code'])
+        exp_detail = AcQuantumExperimentDetail(body['experimentName'], body['version'], int(experiment_id),
+                                               body['experimentType'], body['execution'], bit_width=body['bitWidth'])
+        experiment = AcQuantumExperiment(detail=exp_detail, data=body['data'], code=body['code'])
         return experiment
 
     def get_experiments(self):
-        # type: () -> [AcExperimentDetail]
+        # type: () -> [AcQuantumExperimentDetail]
+
         uri = '{}/experiment/list'.format(self._base_uri)
         params = {
             self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1]
@@ -154,26 +140,28 @@ class AlibabaQuantum(object):
         response = self.handle_ac_response(self._req.get(uri, params=params, headers=headers))
         body = response.data
         experiment_list = [
-            AcExperimentDetail(exp['name'], exp['version'], exp['experimentId'], exp['type'],
-                               exp['execution']) for exp in body]
+            AcQuantumExperimentDetail(exp['name'], exp['version'], exp['experimentId'], exp['type'],
+                                      exp['execution']) for exp in body]
         return experiment_list
 
     def run_experiment(self, experiment_id, experiment_type, bit_width, shots, seed=None):
-        # type: (int, str, int, int, str) -> None
+        # type: (int, AcQuantumBackendType, int, int, str) -> None
+
         uri = '{}/experiment/submit'.format(self._base_uri)
         headers = {'Content-Type': 'application/json', self._TOKEN_HEADER_KEY: self._session.csrf}
         params = {
             self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1],
             'experimentId': experiment_id,
             'bitWidth': bit_width,
-            'type': experiment_type,
+            'type': experiment_type.name,
             'shots': shots,
             'seed': seed if seed else ''
         }
         self.handle_ac_response(self._req.post(uri, headers=headers, params=params))
 
     def get_result(self, experiment_id):
-        # type: (int) -> AcResultResponse
+        # type: (int) -> AcQuantumResultResponse
+
         uri = '{}/experiment/resultlist'.format(self._base_uri)
         params = {
             'experimentId': experiment_id,
@@ -184,15 +172,18 @@ class AlibabaQuantum(object):
         response = self.handle_ac_response(self._req.get(uri, params=params, headers=headers))
         body = response.data
         simulated_result = [
-            AcResult(res['id'], res['seed'], res['shots'], res['startTime'], res['measureQubits'], res['finishTime'],
-                     res['process'], res['data']) for res in body['simulateResult']]
+            AcQuantumResult(res['id'], res['seed'], res['shots'], res['startTime'], res['measureQubits'],
+                            res['finishTime'],
+                            res['process'], res['data']) for res in body['simulateResult']]
         real_result = [
-            AcResult(res['id'], res['seed'], res['shots'], res['startTime'], res['measureQubits'], res['finishTime'],
-                     res['process'], res['data']) for res in body['realResult']]
-        return AcResultResponse(simulated_result, real_result)
+            AcQuantumResult(res['id'], res['seed'], res['shots'], res['startTime'], res['measureQubits'],
+                            res['finishTime'],
+                            res['process'], res['data']) for res in body['realResult']]
+        return AcQuantumResultResponse(simulated_result, real_result)
 
     def download_result(self, experiment_id, file_name=None):
         # type: (int, str) -> None
+
         uri = '{}/experiment/resultDownload'.format(self._base_uri)
         params = {'id': experiment_id}
         headers = {
@@ -208,12 +199,14 @@ class AlibabaQuantum(object):
 
     def _request_csrf_token(self):
         # type: () -> str
+
         uri = '{}/login'.format(self._base_uri)
         response = self._req.get(uri)
         return re.search('[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}?', response.text).group()
 
     def delete_experiment(self, experiment_id):
         # type: (int) -> None
+
         uri = '{}/experiment/delete'.format(self._base_uri)
         headers = {'Content-Type': 'application/json', self._TOKEN_HEADER_KEY: self._session.csrf}
         params = {
@@ -223,8 +216,64 @@ class AlibabaQuantum(object):
 
         self.handle_ac_response(self._req.post(uri, headers=headers, params=params))
 
-    def handle_ac_response(self, response):
-        # type: (requests.Response) -> AcResponse
+    def get_backend_config(self):
+        # type: () -> AcQuantumRawConfig
+
+        uri = '{}/computerConfig/query'.format(self._base_uri)
+        headers = {'Content-Type': 'application/json', self._TOKEN_HEADER_KEY: self._session.csrf}
+        params = {
+            self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1]
+        }
+        response = self.handle_ac_response(self._req.get(uri, headers=headers, params=params))
+        return AcQuantumRawConfig.from_json(response.data)
+
+    def available_backends(self):
+        # TODO: implement
+        # MOCKING
+        return [
+            {
+                'backend_name': 'SIMULATE',
+                'backend_version': '0.0.1',
+                'n_qubits': 25,
+                'basis_gates': ['XGate'],
+                'gates': [
+                    {'name': 'u1', 'parameters': ['lambda'], 'qasm_def': 'gate u1(lambda) q { U(0,0,lambda) q; }'},
+                    {'name': 'u2', 'parameters': ['phi', 'lambda'],
+                     'qasm_def': 'gate u2(phi,lambda) q { U(pi/2,phi,lambda) q; }'},
+                    {'name': 'u3', 'parameters': ['theta', 'phi', 'lambda'],
+                     'qasm_def': 'gate u3(theta,phi,lambda) q { U(theta,phi,lambda) q; }'},
+                    {'name': 'cx', 'parameters': ['c', 't'], 'qasm_def': 'gate cx c,t { CX c,t; }'},
+                    {'name': 'id', 'parameters': ['a'], 'qasm_def': 'gate id a { U(0,0,0) a; }'},
+                    {'name': 'snapshot', 'parameters': ['slot'], 'qasm_def': 'gate snapshot(slot) q { TODO }'}
+                ],
+                'local': False,
+                'simulator': True,
+                'conditional': False,
+                'open_pulse': False,
+                'memory': False,
+                'max_shots': 8192
+            },
+            {
+                'backend_name': 'REAL',
+                'backend_version': '0.0.1',
+                'n_qubits': 11,
+                'basis_gates': ['XGate'],
+                'gates': [
+                    {'name': 'x',
+                     'parameters': [''],
+                     'qasm_def': ''}
+                ],
+                'local': False,
+                'simulator': False,
+                'conditional': False,
+                'open_pulse': False,
+                'memory': False,
+                'max_shots': 20000
+            }
+        ]
+
+    @classmethod
+    def handle_ac_response(cls, response: requests.Response) -> AcQuantumResponse:
         r"""
         :param response: requests.Response
         :return: AcResponse
@@ -236,15 +285,15 @@ class AlibabaQuantum(object):
                 if json['success']:
                     try:
                         data = json['data']
-                        return AcResponse(success=json['success'], exception=json['exception'], data=data)
+                        return AcQuantumResponse(success=json['success'], exception=json['exception'], data=data)
                     except KeyError:
-                        return AcResponse(success=json['success'], exception=json['exception'])
+                        return AcQuantumResponse(success=json['success'], exception=json['exception'])
                 else:
-                    raise AcRequestError(json['exception'])
+                    raise AcQuantumRequestError(json['exception'])
             else:
                 error = response.json()
                 if response.status_code == 403:
-                    raise AcRequestForbiddenError()
-                raise AcRequestError(error['exception'], status_code=response.status_code)
+                    raise AcQuantumRequestForbiddenError()
+                raise AcQuantumRequestError(error['exception'], status_code=response.status_code)
         except ValueError as err:
-            raise AcRequestError(err.__str__())
+            raise AcQuantumRequestError(err.__str__())

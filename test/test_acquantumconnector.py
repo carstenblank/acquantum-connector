@@ -1,13 +1,16 @@
+import os
+import re
 import sys
 import time
-
-import re
 from os import listdir, remove
 from unittest import TestCase
 
-from alibabaQuantum import AlibabaQuantum, AcCredentials, AcExperimentType
-from model.Gates import *
-from model.Model import AcRequestForbiddenError, AcRequestError
+from alibabaQuantum import AcQuantumConnector
+
+from credentials.credentials import AcQuantumCredentials
+from model.backendtype import AcQuantumBackendType
+from model.errors import AcQuantumRequestForbiddenError, AcQuantumRequestError
+from model.gates import XGate, YGate, CCPhase, Measure
 
 
 class TestAlibabaQuantum(TestCase):
@@ -15,13 +18,13 @@ class TestAlibabaQuantum(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.api = AlibabaQuantum()
-        cls.api.create_session(AcCredentials('sebboer', 'qnpwzHyIIFw33Nw2PBx'))
+        cls.api = AcQuantumConnector()
+        cls.api.create_session(AcQuantumCredentials(os.environ['ACQ_USER'], os.environ['ACQ_PWD']))
 
     @classmethod
     def tearDownClass(cls):
         for filename in listdir('.'):
-            if filename.endswith('.xls') or file == 'session':
+            if filename.endswith('.xls') or filename == 'session':
                 remove(filename)
 
     def setUp(self):
@@ -33,7 +36,7 @@ class TestAlibabaQuantum(TestCase):
     def _delete_all_experiments(self):
         try:
             res = self.api.get_experiments()
-        except AcRequestForbiddenError:
+        except AcQuantumRequestForbiddenError:
             self.api.reconnect_session()
             res = self.api.get_experiments()
 
@@ -42,7 +45,7 @@ class TestAlibabaQuantum(TestCase):
             self.api.delete_experiment(id)
 
     def test_create_session(self):
-        self.api.create_session(AcCredentials('sebboer', 'qnpwzHyIIFw33Nw2PBx'))
+        self.api.create_session(AcQuantumCredentials(os.environ['ACQ_USER'], os.environ['ACQ_PWD']))
 
     def test_save_session(self):
         self.api.save_session()
@@ -51,16 +54,16 @@ class TestAlibabaQuantum(TestCase):
         self.api.save_session()
         csrf = self.api._session.csrf
         cookies = self.api._session.cookies
-        self.api = AlibabaQuantum()
-        self.api.load_session(AcCredentials('sebboer', 'qnpwzHyIIFw33Nw2PBx'))
+        self.api = AcQuantumConnector()
+        self.api.load_session()
         self.assertEqual(self.api._session.csrf, csrf)
         self.assertEqual(self.api._session.cookies, cookies)
 
     def test_create_experiment(self):
         try:
-            exp_id = self.api.create_experiment(11, AcExperimentType.SIMULATE, 'UnitTesting')
+            exp_id = self.api.create_experiment(11, AcQuantumBackendType.SIMULATE, 'UnitTesting')
             self.assertTrue(type(exp_id) is int)
-        except AcRequestError as e:
+        except AcQuantumRequestError as e:
             self.fail(e)
 
     def test_update_experiment(self):
@@ -71,7 +74,7 @@ class TestAlibabaQuantum(TestCase):
             g_dict[gate.text] = gate
         try:
             self.api.update_experiment(experiment_id, gates)
-        except AcRequestError as e:
+        except AcQuantumRequestError as e:
             self.fail(e)
 
         response = self.api.get_experiment(experiment_id)
@@ -81,13 +84,13 @@ class TestAlibabaQuantum(TestCase):
             self.assertEqual(g['x'], g_dict[g['text']].x)
             self.assertEqual(g['y'], g_dict[g['text']].y)
 
-    def _create_experiment(self, bit_width=11, exp_type=AcExperimentType.SIMULATE, name='UnitTesting'):
+    def _create_experiment(self, bit_width=11, exp_type=AcQuantumBackendType.SIMULATE, name='UnitTesting'):
         # type: (int, str, str) -> int
 
         response = self.api.create_experiment(bit_width, exp_type, name)
         return response
 
-    def _create_experiment_with_gates(self, gates, bit_width=11, exp_type=AcExperimentType.SIMULATE,
+    def _create_experiment_with_gates(self, gates, bit_width=11, exp_type=AcQuantumBackendType.SIMULATE,
                                       name='UnitTesting'):
         # type: ([Gate], int, str, str) -> int
 
@@ -102,7 +105,7 @@ class TestAlibabaQuantum(TestCase):
             self.assertEqual(experiment.detail.name, 'UnitTesting')
             self.assertEqual(experiment.detail.experiment_type, 'SIMULATE')
             self.assertEqual(experiment.detail.bit_width, 11)
-        except AcRequestError as e:
+        except AcQuantumRequestError as e:
             self.fail(e)
 
     def test_get_experiment_with_gate(self):
@@ -136,7 +139,7 @@ class TestAlibabaQuantum(TestCase):
     def test_get_result_real(self):
         gates = [XGate(1, 1), YGate(2, 2), Measure(1, 2)]
         experiment_id = self._create_experiment_with_gates(gates)
-        self.api.run_experiment(experiment_id, AcExperimentType.REAL, bit_width=4, shots=100)
+        self.api.run_experiment(experiment_id, AcQuantumBackendType.REAL, bit_width=4, shots=100)
 
         time.sleep(1)
         results = self.api.get_result(experiment_id)
@@ -151,7 +154,7 @@ class TestAlibabaQuantum(TestCase):
     def test_get_result_simulated(self):
         gates = [XGate(1, 1), YGate(2, 2), Measure(1, 2)]
         experiment_id = self._create_experiment_with_gates(gates)
-        self.api.run_experiment(experiment_id, AcExperimentType.SIMULATE, bit_width=11, shots=100)
+        self.api.run_experiment(experiment_id, AcQuantumBackendType.SIMULATE, bit_width=11, shots=100)
 
         time.sleep(1)
         results = self.api.get_result(experiment_id)
@@ -167,8 +170,8 @@ class TestAlibabaQuantum(TestCase):
         gates = [XGate(1, 1), YGate(2, 2), Measure(1, 2)]
         experiment_id = self._create_experiment_with_gates(gates)
         try:
-            self.api.run_experiment(experiment_id, AcExperimentType.SIMULATE, bit_width=11, shots=100)
-        except AcRequestError as e:
+            self.api.run_experiment(experiment_id, AcQuantumBackendType.SIMULATE, bit_width=11, shots=100)
+        except AcQuantumRequestError as e:
             self.fail(e)
 
     def test__request_csrf_token(self):
@@ -182,7 +185,7 @@ class TestAlibabaQuantum(TestCase):
         experiment_id = self._create_experiment()
         try:
             self.api.delete_experiment(experiment_id)
-        except AcRequestError as e:
+        except AcQuantumRequestError as e:
             self.fail(e)
 
     def test_delete_all_experiments(self):
@@ -194,5 +197,10 @@ class TestAlibabaQuantum(TestCase):
         for id in exp_id:
             try:
                 self.api.delete_experiment(id)
-            except AcRequestError as e:
+            except AcQuantumRequestError as e:
                 self.fail(e)
+
+    def test_get_backend_config(self):
+        config = self.api.get_backend_config()
+        status = config.system_status.config_value.status
+        self.assertTrue(status in ['ONLINE', 'OFFLINE'])
