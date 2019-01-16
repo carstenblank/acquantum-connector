@@ -5,12 +5,11 @@ import time
 from os import listdir, remove
 from unittest import TestCase
 
-from alibabaQuantum import AcQuantumConnector
-
-from credentials.credentials import AcQuantumCredentials
-from model.backendtype import AcQuantumBackendType
-from model.errors import AcQuantumRequestForbiddenError, AcQuantumRequestError
-from model.gates import XGate, YGate, CCPhase, Measure
+from acquantumconnector.acquantumconnector import AcQuantumConnector
+from acquantumconnector.credentials.credentials import AcQuantumCredentials
+from acquantumconnector.model.backendtype import AcQuantumBackendType
+from acquantumconnector.model.errors import AcQuantumRequestForbiddenError, AcQuantumRequestError
+from acquantumconnector.model.gates import XGate, YGate, CCPhase, Measure, Gate
 
 
 class TestAlibabaQuantum(TestCase):
@@ -41,8 +40,8 @@ class TestAlibabaQuantum(TestCase):
             res = self.api.get_experiments()
 
         exp_ids = [exp.experiment_id for exp in res]
-        for id in exp_ids:
-            self.api.delete_experiment(id)
+        for exp_id in exp_ids:
+            self.api.delete_experiment(exp_id)
 
     def test_create_session(self):
         self.api.create_session(AcQuantumCredentials(os.environ['ACQ_USER'], os.environ['ACQ_PWD']))
@@ -189,14 +188,14 @@ class TestAlibabaQuantum(TestCase):
             self.fail(e)
 
     def test_delete_all_experiments(self):
-        exp_id = []
+        exp_ids = []
         for i in range(3):
             name = 'UnitTesting{}'.format(i)
             bit_width = 11 + i
-            exp_id.append(self._create_experiment(bit_width=bit_width, name=name))
-        for id in exp_id:
+            exp_ids.append(self._create_experiment(bit_width=bit_width, name=name))
+        for exp_id in exp_ids:
             try:
-                self.api.delete_experiment(id)
+                self.api.delete_experiment(exp_id)
             except AcQuantumRequestError as e:
                 self.fail(e)
 

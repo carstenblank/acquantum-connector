@@ -1,7 +1,7 @@
-from acquantumconnector import AcQuantumConnector
-from credentials.credentials import AcQuantumCredentials
-from model.backendtype import AcQuantumBackendType
-from model.gates import XGate, Measure
+from acquantumconnector.acquantumconnector import AcQuantumConnector
+from acquantumconnector.credentials.credentials import AcQuantumCredentials
+from acquantumconnector.model.backendtype import AcQuantumBackendType
+from acquantumconnector.model.gates import XGate, Measure
 
 api = AcQuantumConnector()
 

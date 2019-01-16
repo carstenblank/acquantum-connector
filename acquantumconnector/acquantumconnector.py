@@ -4,13 +4,13 @@ from typing import Any
 
 import requests
 
-from credentials.credentials import AcQuantumCredentials
-from model.backendtype import AcQuantumBackendType
-from model.config import AcQuantumRawConfig
-from model.errors import AcQuantumRequestError, AcQuantumRequestForbiddenError
-from model.gates import Gate
-from model.response import AcQuantumResponse, AcQuantumExperimentDetail, AcQuantumResult, AcQuantumResultResponse, \
-    AcQuantumExperiment
+from acquantumconnector.credentials.credentials import AcQuantumCredentials
+from acquantumconnector.model.backendtype import AcQuantumBackendType
+from acquantumconnector.model.config import AcQuantumRawConfig
+from acquantumconnector.model.errors import AcQuantumRequestError, AcQuantumRequestForbiddenError
+from acquantumconnector.model.gates import Gate
+from acquantumconnector.model.response import AcQuantumExperimentDetail, AcQuantumExperiment, AcQuantumResult, \
+    AcQuantumResultResponse, AcQuantumResponse
 
 
 class AcQuantumSession(object):
@@ -80,6 +80,13 @@ class AcQuantumConnector(object):
     def create_experiment(self, bit_width, experiment_type, experiment_name):
         # type: (int, AcQuantumBackendType, str) -> int
 
+        """
+        :param bit_width:  bit width of the experiment
+        :param experiment_type: Type of the backend the experiment should run
+        :param experiment_name: Name of the experiment
+        :return:
+        """
+
         uri = '{}/experiment/infosave'.format(self._base_uri)
         params = {self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1]}
         headers = {self._TOKEN_HEADER_KEY: self._session.csrf, 'Content-Type': 'application/json'}
@@ -93,6 +100,16 @@ class AcQuantumConnector(object):
 
     def update_experiment(self, experiment_id, gates, code=None, override=True):
         # type: (int, [Gate], str, bool) -> None
+
+        """
+        :param experiment_id: ID of created Experiment
+        :param gates: Gates object definition that should be submitted
+        :param code:
+        :param override: Default = True. If False the last project State gets fetched from the Backend and Merged with
+                the new Gates Definition
+        :return: None
+        :raises AcQuantumRequestError
+        """
 
         uri = '{}/experiment/codesave'.format(self._base_uri)
         params = {
@@ -113,6 +130,10 @@ class AcQuantumConnector(object):
 
     def get_experiment(self, experiment_id):
         # type: (int) -> AcQuantumExperiment
+        """
+        :param experiment_id: ID of experiment
+        :return: AcQuantumExperiment
+        """
 
         uri = '{}/experiment/detail'.format(self._base_uri)
         params = {
@@ -219,6 +240,11 @@ class AcQuantumConnector(object):
     def get_backend_config(self):
         # type: () -> AcQuantumRawConfig
 
+        """
+
+        :return: Backend Configuration
+        """
+
         uri = '{}/computerConfig/query'.format(self._base_uri)
         headers = {'Content-Type': 'application/json', self._TOKEN_HEADER_KEY: self._session.csrf}
         params = {
@@ -273,10 +299,12 @@ class AcQuantumConnector(object):
         ]
 
     @classmethod
-    def handle_ac_response(cls, response: requests.Response) -> AcQuantumResponse:
+    def handle_ac_response(cls, response):
+        # type: (requests.Response) -> AcQuantumResponse
+
         r"""
         :param response: requests.Response
-        :return: AcResponse
+        :return: AcQuantumResponse
         :raises: AcRequestError, AcRequestForbiddenError
         """
         try:
