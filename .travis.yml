@@ -6,6 +6,7 @@ python:
 #  system_site_packages: true
 install:
   - python setup.py bdist_wheel
+  - pip install dist/acquantum_connector*.whl
 script:
   python -m unittest discover -s test
 env:
