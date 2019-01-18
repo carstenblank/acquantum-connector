@@ -1,5 +1,5 @@
-qiskit-ali
-==========
+AcQuantumConnector
+==================
 
 .. toctree::
    :maxdepth: 4

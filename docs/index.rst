@@ -12,12 +12,13 @@ Contents
 .. rst-class:: contents local topic
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Getting started
-   :titlesonly:
+    :maxdepth: 2
+    :caption: Getting started
+    :titlesonly:
 
     example
     license
+
 
 Indices and tables
 ==================
