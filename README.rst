@@ -2,8 +2,8 @@ AcQuantum Connector
 ###################################
 
 .. image:: https://readthedocs.org/projects/acquantum-connector/badge/?version=latest
-:target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest&style=for-the-badge
-:alt: Documentation Status
+    :target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 .. example-start-inclusion-marker-do-not-remove
 
@@ -11,6 +11,7 @@ Example
 =======
 
 .. code-block:: python
+
     from acquantumconnector.connector.acquantumconnector import AcQuantumConnector
     from acquantumconnector.credentials.credentials import AcQuantumCredentials
     from acquantumconnector.model.backendtype import AcQuantumBackendType
