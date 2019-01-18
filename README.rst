@@ -4,6 +4,9 @@ AcQuantum Connector
 .. image:: https://img.shields.io/readthedocs/acquantum-connector.svg?style=for-the-badge
     :target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest
     :alt: Read the Docs
+.. image:: https://img.shields.io/travis/com/sebboer/acquantum-connector.svg?style=for-the-badge
+    :target: https://travis-ci.com/sebboer/acquantum-connector
+    :alt: Travis Build
 
 .. example-start-inclusion-marker-do-not-remove
 
