@@ -21,7 +21,7 @@ Contents
    :caption: Getting started
    :titlesonly:
 
-   gettingstarted
+   example
 
 Indices and tables
 ==================
