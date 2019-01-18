@@ -5,7 +5,7 @@ import time
 from os import listdir, remove
 from unittest import TestCase
 
-from acquantumconnector.acquantumconnector import AcQuantumConnector
+from acquantumconnector.connector.acquantumconnector import AcQuantumConnector
 from acquantumconnector.credentials.credentials import AcQuantumCredentials
 from acquantumconnector.model.backendtype import AcQuantumBackendType
 from acquantumconnector.model.errors import AcQuantumRequestForbiddenError, AcQuantumRequestError
