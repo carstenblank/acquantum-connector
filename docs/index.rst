@@ -16,7 +16,8 @@ Contents
    :caption: Getting started
    :titlesonly:
 
-   example
+    example
+    license
 
 Indices and tables
 ==================

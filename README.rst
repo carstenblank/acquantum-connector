@@ -49,3 +49,13 @@ Example
     api.save_session()
 
 .. example-end-inclusion-marker-do-not-remove
+
+.. license-start-inclusion-marker-do-not-remove
+
+License
+=======
+
+The AcQuantumConnector is **free** and **open source**, released under
+the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
+
+.. license-end-inclusion-marker-do-not-remove
