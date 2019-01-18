@@ -2,7 +2,7 @@ AcQuantum Connector
 ###################################
 
 .. image:: https://readthedocs.org/projects/acquantum-connector/badge/?version=latest
-:target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest
+:target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest&style=for-the-badge
 :alt: Documentation Status
 
 .. example-start-inclusion-marker-do-not-remove
