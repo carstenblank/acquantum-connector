@@ -1,9 +1,9 @@
 AcQuantum Connector
 ###################################
 
-.. image:: https://readthedocs.org/projects/acquantum-connector/badge/?version=latest
-    :target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest&style=for-the-badge
-    :alt: Documentation Status
+.. image:: https://img.shields.io/readthedocs/acquantum-connector.svg?style=for-the-badge
+    :target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest
+    :alt: Read the Docs
 
 .. example-start-inclusion-marker-do-not-remove
 
