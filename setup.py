@@ -13,8 +13,8 @@ setuptools.setup(
     author_email="blank@data-cybernetics.com",
     description="",
     long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/carstenblank/acquantum-connector",
+    long_description_content_type="rst",
+    url="https://github.com/sebboer/acquantum-connector",
     packages=setuptools.find_packages(),
     install_requires=requirements,
     classifiers=[
