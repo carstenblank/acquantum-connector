@@ -14,7 +14,7 @@ setuptools.setup(
     description="",
     long_description=long_description,
     long_description_content_type="rst",
-    url="https://github.com/sebboer/acquantum-connector",
+    url="https://github.com/carstenblank/acquantum-connector",
     packages=setuptools.find_packages(),
     install_requires=requirements,
     classifiers=[
