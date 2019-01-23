@@ -7,7 +7,7 @@ with open("requirements.txt") as f:
     requirements = f.readlines()
 
 setuptools.setup(
-    name="acquantum_connector",
+    name="acquantum-connector",
     version="0.0.1",
     author="Carsten Blank",
     author_email="blank@data-cybernetics.com",
@@ -17,6 +17,7 @@ setuptools.setup(
     url="https://github.com/carstenblank/acquantum-connector",
     packages=setuptools.find_packages(),
     install_requires=requirements,
+    license='Apache 2.0',
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3",
