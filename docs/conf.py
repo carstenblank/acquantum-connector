@@ -129,7 +129,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'AcQuantumConnector.tex', 'AcQuantumConnector Documentation',
-     'Sebastian Boerakker', 'manual'),
+     'Carsten Blank', 'manual'),
 ]
 
 # -- Options for manual page output ------------------------------------------
