@@ -1,14 +1,14 @@
 AcQuantum Connector
 ###################################
 
-.. image:: https://img.shields.io/codacy/grade/8504718d2cd448e6962a8df76cf2c8d3.svg?style=for-the-badge
+.. image:: https://img.shields.io/codacy/grade/707d09158742419a9379e9bce6c2510c.svg?style=for-the-badge
    :alt: Codacy Badge
    :target: https://app.codacy.com/app/sebboer/acquantum-connector?utm_source=github.com&utm_medium=referral&utm_content=sebboer/acquantum-connector&utm_campaign=Badge_Grade_Dashboard
 
 .. image:: https://img.shields.io/readthedocs/acquantum-connector.svg?style=for-the-badge
     :target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest
     :alt: Read the Docs
-.. image:: https://img.shields.io/travis/com/sebboer/acquantum-connector.svg?style=for-the-badge
+.. image:: https://img.shields.io/travis/com/carstenblank/acquantum-connector.svg?style=for-the-badge
     :target: https://travis-ci.com/sebboer/acquantum-connector
     :alt: Travis Build
 
