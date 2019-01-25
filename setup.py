@@ -15,7 +15,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="rst",
     url="https://github.com/carstenblank/acquantum-connector",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(include=['acquantumconnector'], exclude=['acquantumconnector.example']),
     install_requires=requirements,
     license='Apache 2.0',
     classifiers=[
