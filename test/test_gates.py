@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from acquantumconnector.model.gates import RzGate, RxGate, RyGate, CPhase, CCPhase
+from acquantumconnector.model.gates import RzGate, RxGate, RyGate, CPhase, CCPhase, XGate, YGate, ZGate, HGate, SGate, \
+    TGate, SDag, TDag, Measure
 
 
 class TestGates(TestCase):
@@ -26,6 +27,12 @@ class TestGates(TestCase):
         with self.assertRaises(AssertionError):
             RzGate(1, 1, -1)
 
+        with self.assertRaises(AssertionError):
+            RzGate(0, 1, 350)
+
+        with self.assertRaises(AssertionError):
+            RzGate(1, 0, 234)
+
     def test_Rx_Gate(self):
         gate = RxGate(1, 1, 360)
         self.assertEqual(gate.text, 'RX_360')
@@ -44,6 +51,12 @@ class TestGates(TestCase):
         with self.assertRaises(AssertionError):
             RxGate(1, 1, -1)
 
+        with self.assertRaises(AssertionError):
+            RxGate(0, 1, 350)
+
+        with self.assertRaises(AssertionError):
+            RxGate(1, 0, 234)
+
     def test_Ry_Gate(self):
         gate = RyGate(1, 1, 360)
         self.assertEqual(gate.text, 'RY_360')
@@ -61,6 +74,12 @@ class TestGates(TestCase):
 
         with self.assertRaises(AssertionError):
             RyGate(1, 1, -1)
+
+        with self.assertRaises(AssertionError):
+            RyGate(0, 1, 350)
+
+        with self.assertRaises(AssertionError):
+            RyGate(1, 0, 234)
 
     def test_CPhase(self):
         phase = CPhase([1], [1, 2])
@@ -148,3 +167,112 @@ class TestGates(TestCase):
 
         with self.assertRaises(AssertionError):
             CCPhase(1, (3, 3, 3))
+
+    def test_XGate(self):
+        gate = XGate(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('X', gate.text)
+
+        with self.assertRaises(AssertionError):
+            XGate(0, 1)
+
+        with self.assertRaises(AssertionError):
+            XGate(1, 0)
+
+    def test_YGate(self):
+        gate = YGate(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('Y', gate.text)
+
+        with self.assertRaises(AssertionError):
+            YGate(0, 1)
+
+        with self.assertRaises(AssertionError):
+            YGate(1, 0)
+
+    def test_ZGate(self):
+        gate = ZGate(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('Z', gate.text)
+
+        with self.assertRaises(AssertionError):
+            ZGate(0, 1)
+
+        with self.assertRaises(AssertionError):
+            ZGate(1, 0)
+
+    def test_HGate(self):
+        gate = HGate(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('H', gate.text)
+
+        with self.assertRaises(AssertionError):
+            HGate(0, 1)
+
+        with self.assertRaises(AssertionError):
+            HGate(1, 0)
+
+    def test_SGate(self):
+        gate = SGate(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('S', gate.text)
+
+        with self.assertRaises(AssertionError):
+            SGate(0, 1)
+
+        with self.assertRaises(AssertionError):
+            SGate(1, 0)
+
+    def test_TGate(self):
+        gate = TGate(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('T', gate.text)
+
+        with self.assertRaises(AssertionError):
+            TGate(0, 1)
+
+        with self.assertRaises(AssertionError):
+            TGate(1, 0)
+
+    def test_SDag(self):
+        gate = SDag(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('S†', gate.text)
+
+        with self.assertRaises(AssertionError):
+            SDag(0, 1)
+
+        with self.assertRaises(AssertionError):
+            SDag(1, 0)
+
+    def test_TDag(self):
+        gate = TDag(1, 1)
+        self.assertEqual(1, gate.x)
+        self.assertEqual(1, gate.y)
+        self.assertEqual('T†', gate.text)
+
+        with self.assertRaises(AssertionError):
+            TDag(0, 1)
+
+        with self.assertRaises(AssertionError):
+            TDag(1, 0)
+
+    def test_Measure(self):
+        measure = Measure(1, 1)
+        self.assertEqual(1, measure.x)
+        self.assertEqual(1, measure.y)
+        self.assertEqual(1, measure.y)
+        self.assertEqual('M', measure.text)
+
+        with self.assertRaises(AssertionError):
+            Measure(0, 1)
+
+        with self.assertRaises(AssertionError):
+            Measure(1, 0)
