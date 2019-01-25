@@ -9,10 +9,11 @@ from acquantumconnector.connector.acquantumconnector import AcQuantumConnector
 from acquantumconnector.credentials.credentials import AcQuantumCredentials
 from acquantumconnector.model.backendtype import AcQuantumBackendType
 from acquantumconnector.model.errors import AcQuantumRequestForbiddenError, AcQuantumRequestError
-from acquantumconnector.model.gates import XGate, YGate, CCPhase, Measure, Gate
+from acquantumconnector.model.gates import XGate, YGate, CCPhase, Measure, Gate, CPhase, \
+    RxGate, RzGate, RyGate
 
 
-class TestAlibabaQuantum(TestCase):
+class AcQuantumConnectorIntegrationTest(TestCase):
     api = None
 
     @classmethod
@@ -67,7 +68,8 @@ class TestAlibabaQuantum(TestCase):
 
     def test_update_experiment(self):
         experiment_id = self._create_experiment()
-        gates = [XGate(1, 2), YGate(2, 2), CCPhase([3, 3, 3], [1, 2, 3]), Measure(4, 4)]
+        gates = [XGate(1, 2), YGate(2, 2), CCPhase(3, [1, 2, 3]), Measure(4, 4), CPhase(6, (1, 4)),
+                 RxGate(6, 6, 340), RzGate(6, 7, 234), RyGate(6, 8, 233)]
         g_dict = {}
         for gate in gates:
             g_dict[gate.text] = gate
