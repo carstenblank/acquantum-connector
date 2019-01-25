@@ -151,3 +151,33 @@ class Measure(Gate):
         self.x = x
         self.y = y
         self.text = 'M'
+
+
+class SDag(Gate):
+
+    def __init__(self, x, y):
+        # type: (int, int) -> None
+        super(SDag, self).__init__()
+        self.x = x
+        self.y = y
+        self.text = 'S†'
+
+
+class TGate(Gate):
+
+    def __init__(self, x, y):
+        # type: (int, int) -> None
+        super(TGate, self).__init__()
+        self.x = x
+        self.y = y
+        self.text = 'T'
+
+
+class TDag(Gate):
+
+    def __init__(self, x, y):
+        # type: (int, int) -> None
+        super(TDag, self).__init__()
+        self.x = x
+        self.y = y
+        self.text = 'T†'
