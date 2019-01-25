@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 
 class Gate(object):
@@ -100,40 +100,47 @@ class CPhase(Gate):
     text = 'CP'
 
     def __init__(self, x, y):
-        # type: (List[int], List[int]) -> None
+        # type: (Union[List[int], int, (int, int)], Union[List[int], (int,int)]) -> None
         super(CPhase, self).__init__()
-        self.x = x
-        self.y = y
-        self.text = 'CP'
-        self.dict()
+        if type(x) is int:
+            self.x = self.x1 = x
+        else:
+            assert len(set(x)) == 1, 'X - coordinates not equal or empty'
+            if len(x) == 1:
+                self.x = self.x1 = x[0]
+            else:
+                assert len(x) == 2, 'X - coordinates greater 2'
+                self.x, self.x1 = x
 
-    def dict(self):
-        obj = {'text': self.text, 'gateDetail': self.gateDetail}
-        for index, value in enumerate(self.x):
-            obj['x{}'.format('' if index == 0 else index)] = value
-        for value, index in enumerate(self.y):
-            obj['y{}'.format('' if index == 0 else index)] = value
-        self.__dict__ = obj
+        assert type(y) in (tuple, list), 'y - should be al list or tuple'
+        assert len(y) == 2, 'number of Y - coordinates unequal 2'
+        assert len(set(y)) == 2, 'Y - coordinates can not be equal'
+
+        self.y, self.y1 = y
+        self.text = 'CP'
 
 
 class CCPhase(Gate):
     text = 'CCP'
 
     def __init__(self, x, y):
-        # type: (List[int], List[int]) -> None
+        # type: (Union[List[int], int, (int, int)], Union[List[int], (int,int)]) -> None
         super(CCPhase, self).__init__()
-        self.x = x
-        self.y = y
+        if type(x) is int:
+            self.x = self.x1 = self.x2 = x
+        else:
+            assert len(set(x)) == 1, 'X - coordinates not equal or empty'
+            if len(x) == 1:
+                self.x = x[0]
+                self.x1 = x[0]
+            else:
+                assert len(x) == 3, 'X - coordinates greater 3'
+                self.x, self.x1, self.x2 = x
+        assert type(y) in (tuple, list), 'y - should be al list or tuple'
+        assert len(y) == 3, 'number of Y - coordinates unequal 2'
+        assert len(set(y)) == 3, 'Y - coordinates can not be equal'
+        self.y, self.y1, self.y2 = y
         self.text = 'CCP'
-        self.dict()
-
-    def dict(self):
-        obj = {'text': self.text, 'gateDetail': self.gateDetail}
-        for index, value in enumerate(self.x):
-            obj['x{}'.format('' if index == 0 else index)] = value
-        for index, value in enumerate(self.y):
-            obj['y{}'.format('' if index == 0 else index)] = value
-        self.__dict__ = obj
 
 
 class Measure(Gate):
