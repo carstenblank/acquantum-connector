@@ -63,25 +63,36 @@ class SGate(Gate):
 
 
 class RxGate(Gate):
-    text = 'Rx'
 
-    def __init__(self, x, y):
-        # type: (int, int) -> None
+    def __init__(self, x, y, angle):
+        # type: (int, int, int) -> None
+        assert (angle in range(0, 361))
         super(RxGate, self).__init__()
         self.x = x
         self.y = y
-        self.text = 'Rx'
+        self.text = 'RX_{}'.format(angle)
 
 
 class RyGate(Gate):
-    text = 'Ry'
 
-    def __init__(self, x, y):
-        # type: (int, int) -> None
+    def __init__(self, x, y, angle):
+        # type: (int, int, int) -> None
+        assert (angle in range(0, 361))
         super(RyGate, self).__init__()
         self.x = x
         self.y = y
-        self.text = 'Ry'
+        self.text = 'RY_{}'.format(angle)
+
+
+class RzGate(Gate):
+
+    def __init__(self, x, y, angle):
+        # type: (int, int, int) -> None
+        assert (angle in range(0, 361))
+        super(RzGate, self).__init__()
+        self.x = x
+        self.y = y
+        self.text = 'RZ_{}'.format(angle)
 
 
 # PHASE
