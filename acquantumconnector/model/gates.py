@@ -16,6 +16,8 @@ class HGate(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(HGate, self).__init__()
         self.x = x
         self.y = y
@@ -26,6 +28,8 @@ class XGate(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(XGate, self).__init__()
         self.x = x
         self.y = y
@@ -36,6 +40,8 @@ class YGate(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(YGate, self).__init__()
         self.x = x
         self.y = y
@@ -46,6 +52,8 @@ class ZGate(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(ZGate, self).__init__()
         self.x = x
         self.y = y
@@ -56,6 +64,8 @@ class SGate(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(SGate, self).__init__()
         self.x = x
         self.y = y
@@ -67,6 +77,8 @@ class RxGate(Gate):
     def __init__(self, x, y, angle):
         # type: (int, int, int) -> None
         assert (angle in range(0, 361))
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(RxGate, self).__init__()
         self.x = x
         self.y = y
@@ -78,6 +90,8 @@ class RyGate(Gate):
     def __init__(self, x, y, angle):
         # type: (int, int, int) -> None
         assert (angle in range(0, 361))
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(RyGate, self).__init__()
         self.x = x
         self.y = y
@@ -89,6 +103,8 @@ class RzGate(Gate):
     def __init__(self, x, y, angle):
         # type: (int, int, int) -> None
         assert (angle in range(0, 361))
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(RzGate, self).__init__()
         self.x = x
         self.y = y
@@ -127,9 +143,11 @@ class CCPhase(Gate):
         # type: (Union[List[int], int, (int, int)], Union[List[int], (int,int)]) -> None
         super(CCPhase, self).__init__()
         if type(x) is int:
+            assert x > 0, 'X - coordinate must be greater 0'
             self.x = self.x1 = self.x2 = x
         else:
             assert len(set(x)) == 1, 'X - coordinates not equal or empty'
+            assert all(value > 0 for value in x), 'X - coordinate must be greater 0'
             if len(x) == 1:
                 self.x = x[0]
                 self.x1 = x[0]
@@ -139,6 +157,7 @@ class CCPhase(Gate):
         assert type(y) in (tuple, list), 'y - should be al list or tuple'
         assert len(y) == 3, 'number of Y - coordinates unequal 2'
         assert len(set(y)) == 3, 'Y - coordinates can not be equal'
+        assert all(value > 0 for value in y), 'Y - coordinate must be greater 0'
         self.y, self.y1, self.y2 = y
         self.text = 'CCP'
 
@@ -147,6 +166,8 @@ class Measure(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(Measure, self).__init__()
         self.x = x
         self.y = y
@@ -157,6 +178,8 @@ class SDag(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(SDag, self).__init__()
         self.x = x
         self.y = y
@@ -167,6 +190,8 @@ class TGate(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(TGate, self).__init__()
         self.x = x
         self.y = y
@@ -177,6 +202,8 @@ class TDag(Gate):
 
     def __init__(self, x, y):
         # type: (int, int) -> None
+        assert x > 0, 'x - coordinate must be greater 0'
+        assert y > 0, 'y - coordinate must be greater 0'
         super(TDag, self).__init__()
         self.x = x
         self.y = y
