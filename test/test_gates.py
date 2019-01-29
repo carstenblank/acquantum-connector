@@ -21,16 +21,16 @@ class TestGates(TestCase):
         self.assertTrue('gateDetail' in g_dict)
         self.assertTrue('text' in g_dict)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RzGate(1, 1, 361)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RzGate(1, 1, -1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RzGate(0, 1, 350)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RzGate(1, 0, 234)
 
     def test_Rx_Gate(self):
@@ -45,16 +45,16 @@ class TestGates(TestCase):
         self.assertTrue('gateDetail' in g_dict)
         self.assertTrue('text' in g_dict)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RxGate(1, 1, 361)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RxGate(1, 1, -1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RxGate(0, 1, 350)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RxGate(1, 0, 234)
 
     def test_Ry_Gate(self):
@@ -69,16 +69,16 @@ class TestGates(TestCase):
         self.assertTrue('gateDetail' in g_dict)
         self.assertTrue('text' in g_dict)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RyGate(1, 1, 361)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RyGate(1, 1, -1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RyGate(0, 1, 350)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             RyGate(1, 0, 234)
 
     def test_CPhase(self):
@@ -102,25 +102,25 @@ class TestGates(TestCase):
         self.assertEqual(1, phase.y)
         self.assertEqual(2, phase.y1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CPhase([1, 2], [1, 2])
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CPhase([1, 1], [1, 2, 3])
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CPhase(1, (1, 2, 3))
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CPhase((1, 2), (1, 3))
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CPhase((1, 2), 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CPhase(1, (3, 3))
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CPhase(1, [3, 3])
 
     def test_CCPhase(self):
@@ -150,22 +150,22 @@ class TestGates(TestCase):
         self.assertEqual(2, phase.y1)
         self.assertEqual(4, phase.y2)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CCPhase([1, 2, 3], [1, 2, 3])
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CCPhase([1, 1, 1], [1, 2, 2])
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CCPhase(1, (1, 2, 2))
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CCPhase((1, 2), (1, 2, 3))
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CCPhase((1, 2), 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             CCPhase(1, (3, 3, 3))
 
     def test_XGate(self):
@@ -174,10 +174,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('X', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             XGate(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             XGate(1, 0)
 
     def test_YGate(self):
@@ -186,10 +186,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('Y', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             YGate(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             YGate(1, 0)
 
     def test_ZGate(self):
@@ -198,10 +198,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('Z', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             ZGate(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             ZGate(1, 0)
 
     def test_HGate(self):
@@ -210,10 +210,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('H', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             HGate(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             HGate(1, 0)
 
     def test_SGate(self):
@@ -222,10 +222,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('S', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             SGate(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             SGate(1, 0)
 
     def test_TGate(self):
@@ -234,10 +234,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('T', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TGate(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TGate(1, 0)
 
     def test_SDag(self):
@@ -246,10 +246,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('S†', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             SDag(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             SDag(1, 0)
 
     def test_TDag(self):
@@ -258,10 +258,10 @@ class TestGates(TestCase):
         self.assertEqual(1, gate.y)
         self.assertEqual('T†', gate.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TDag(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TDag(1, 0)
 
     def test_Measure(self):
@@ -271,8 +271,8 @@ class TestGates(TestCase):
         self.assertEqual(1, measure.y)
         self.assertEqual('M', measure.text)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Measure(0, 1)
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Measure(1, 0)
