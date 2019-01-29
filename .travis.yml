@@ -8,7 +8,7 @@ install:
   - python setup.py bdist_wheel
   - pip install dist/acquantum_connector*.whl
 script:
-  python -m unittest discover -s test/ -t test/
+  python -m unittest discover -s test/ -t test/ -p 'test*.py'
 bundler_args: --retry 5
 env:
   global:
