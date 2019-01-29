@@ -62,7 +62,7 @@ class AcQuantumConnectorIntegrationTest(TestCase):
     def test_create_experiment(self):
         try:
             exp_id = self.api.create_experiment(11, AcQuantumBackendType.SIMULATE, 'UnitTesting')
-            self.assertTrue(type(exp_id) is int)
+            self.assertIsInstance(exp_id, int)
         except AcQuantumRequestError as e:
             self.fail(e)
 

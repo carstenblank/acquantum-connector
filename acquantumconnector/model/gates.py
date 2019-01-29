@@ -137,7 +137,7 @@ class CPhase(Gate):
     def __init__(self, x, y):
         # type: (Union[List[int], int, (int, int)], Union[List[int], (int,int)]) -> None
         super(CPhase, self).__init__()
-        if type(x) is int:
+        if isinstance(x, int):
             self.x = self.x1 = x
         else:
             if len(set(x)) != 1:
@@ -164,7 +164,7 @@ class CCPhase(Gate):
     def __init__(self, x, y):
         # type: (Union[List[int], int, (int, int)], Union[List[int], (int,int)]) -> None
         super(CCPhase, self).__init__()
-        if type(x) is int:
+        if isinstance(x, int):
             if x <= 0:
                 raise ValueError('x - coordinate must be greater 0')
             self.x = self.x1 = self.x2 = x
