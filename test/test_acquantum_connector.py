@@ -130,9 +130,6 @@ class MockedResponse:
     def json(self):
         return self.json_data
 
-    def text(self):
-        return self.raw_response
-
 
 class AcQuantumConnectorUnitTest(TestCase):
 
@@ -142,7 +139,7 @@ class AcQuantumConnectorUnitTest(TestCase):
 
     @classmethod
     @mock.patch('acquantumconnector.connector.acquantumconnector.requests.session', side_effect=MockApi)
-    def init(cls, mock_api):
+    def init(cls, mock_api=None):
         cls.api = AcQuantumConnector()
 
     def setUp(self):
