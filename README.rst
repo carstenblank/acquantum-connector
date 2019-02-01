@@ -8,9 +8,18 @@ AcQuantum Connector
 .. image:: https://img.shields.io/readthedocs/acquantum-connector.svg?style=for-the-badge
     :target: https://acquantum-connector.readthedocs.io/en/latest/?badge=latest
     :alt: Read the Docs
+
 .. image:: https://img.shields.io/travis/com/carstenblank/acquantum-connector.svg?style=for-the-badge
     :target: https://travis-ci.com/carstenblank/acquantum-connector
     :alt: Travis Build
+
+.. image:: https://img.shields.io/pypi/v/acquantum-connector.svg?style=for-the-badge
+    :alt: PyPI
+    :target: https://pypi.org/project/acquantum-connector
+
+.. image:: https://img.shields.io/pypi/pyversions/acquantum-connector.svg?style=for-the-badge
+    :alt: PyPI - Python Version
+    :target: https://pypi.org/project/acquantum-connector
 
 .. example-start-inclusion-marker-do-not-remove
 
