@@ -237,6 +237,17 @@ class AcQuantumConnector(object):
 
         self.handle_ac_response(self._req.post(uri, headers=headers, params=params))
 
+    def delete_result(self, result_id):
+        # type: (int) -> None
+        uri = '{}/experiment/result/delete'.format(self._base_uri)
+        headers = {'Content-Type': 'application/json', self._TOKEN_HEADER_KEY: self._session.csrf}
+        params = {
+            self._CHARSET_PARAM[0]: self._CHARSET_PARAM[1],
+            'id': result_id
+        }
+
+        self.handle_ac_response(self._req.post(uri, headers=headers, params=params))
+
     def get_backend_config(self):
         # type: () -> AcQuantumRawConfig
 

@@ -83,8 +83,10 @@ class AcQuantumResultResponse:
             if self.real_result:
                 return self.real_result, self.simulated_result
             return self.simulated_result[0]
-        else:
+        elif self.real_result:
             return self.real_result[0]
+        else:
+            return None
 
     def __str__(self):
         return 'AcResultResponse {{ simulated_result: {}, real_result: {} }}'.format(self.simulated_result,

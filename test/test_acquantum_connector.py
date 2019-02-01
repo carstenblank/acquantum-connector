@@ -110,13 +110,14 @@ class MockApi:
         elif args[0] == '{}/experiment/submit'.format(self.base_uri):
             if 'params' in kwargs and kwargs['params']['experimentId'] == 123:
                 return MockedResponse(json_data=self.base_response)
-            else:
-                return MockedResponse(json_data=self.failed_response)
         elif args[0] == '{}/experiment/delete'.format(self.base_uri):
             if 'params' in kwargs and kwargs['params']['experimentId'] == 123:
                 return MockedResponse(json_data=self.base_response)
-            else:
-                return MockedResponse(json_data=self.failed_response)
+        elif args[0] == '{}/experiment/result/delete'.format(self.base_uri):
+            if 'params' in kwargs and kwargs['params']['id'] == 123:
+                return MockedResponse(json_data=self.base_response)
+
+        return MockedResponse(json_data=self.failed_response)
 
 
 class MockedResponse:
@@ -140,6 +141,7 @@ class AcQuantumConnectorUnitTest(TestCase):
     @classmethod
     @mock.patch('acquantumconnector.connector.acquantumconnector.requests.session', side_effect=MockApi)
     def init(cls, mock_api=None):
+        cls.mock_api = mock_api
         cls.api = AcQuantumConnector()
 
     def setUp(self):
@@ -199,3 +201,10 @@ class AcQuantumConnectorUnitTest(TestCase):
         self.assertIsNotNone(simulate_result.start_time)
         self.assertIsNotNone(simulate_result.finish_time)
         self.assertIsNotNone(simulate_result.data)
+
+    def test_delete_result(self):
+        self.api.delete_result(123)
+
+    def test_delete_result_should_fail(self):
+        with self.assertRaises(AcQuantumRequestError):
+            self.api.delete_result(124)

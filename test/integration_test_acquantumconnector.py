@@ -175,6 +175,14 @@ class AcQuantumConnectorIntegrationTest(TestCase):
         except AcQuantumRequestError as e:
             self.fail(e)
 
+    def test_run_real_experiment(self):
+        gates = [XGate(1, 1), Measure(1, 2)]
+        experiment_id = self._create_experiment_with_gates(gates)
+        try:
+            self.api.run_experiment(experiment_id, AcQuantumBackendType.REAL, bit_width=4, shots=9000)
+        except AcQuantumRequestError as e:
+            self.fail(e)
+
     def test__request_csrf_token(self):
         token = self.api._request_csrf_token()
         if sys.version_info[0] == 3:
@@ -200,6 +208,19 @@ class AcQuantumConnectorIntegrationTest(TestCase):
                 self.api.delete_experiment(exp_id)
             except AcQuantumRequestError as e:
                 self.fail(e)
+
+    def test_delete_result(self):
+        gates = [XGate(1, 1), Measure(1, 2)]
+        experiment_id = self._create_experiment_with_gates(gates)
+        self.api.run_experiment(experiment_id, AcQuantumBackendType.REAL, bit_width=4, shots=9000)
+        result = self.api.get_result(experiment_id)
+        result_id = result.get_result().result_id
+        try:
+            self.api.delete_result(result_id)
+        except AcQuantumRequestError as e:
+            self.fail(e)
+        result = self.api.get_result(experiment_id)
+        self.assertEqual(None, result.get_result())
 
     def test_get_backend_config(self):
         config = self.api.get_backend_config()
