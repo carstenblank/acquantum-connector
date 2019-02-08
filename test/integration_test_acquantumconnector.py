@@ -228,13 +228,13 @@ class AcQuantumConnectorIntegrationTest(TestCase):
         experiment_id = self._create_experiment_with_gates(gates)
         self.api.run_experiment(experiment_id, AcQuantumBackendType.REAL, bit_width=4, shots=9000)
         result = self.api.get_result(experiment_id)
-        result_id = result.get_result().result_id
+        result_id = result.get_results()[0].result_id
         try:
             self.api.delete_result(result_id)
         except AcQuantumRequestError as e:
             self.fail(e)
         result = self.api.get_result(experiment_id)
-        self.assertEqual(None, result.get_result())
+        self.assertEqual(None, result.get_results())
 
     def test_get_backend_config(self):
         config = self.api.get_backend_config()
