@@ -12,6 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+
 class AcQuantumRequestError(Exception):
     def __init__(self, message, status_code=None):
         # type: (str, int) -> None
