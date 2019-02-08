@@ -121,8 +121,9 @@ class AcQuantumResult:
         self.measure_qubits = measure_qubits
         self.finish_time = finish_time
         self.process = process
-        self.data = {k: float(v) for k, v in data.items()}
         self.exception = exception
+        if data:
+            self.data = {k: float(v) for k, v in data.items()}
 
     def __str__(self):
         return 'AcResult: {{ result_id: {}, seed: {}, shots: {}, start_time: {}, measure_qubits: {},  ' \
