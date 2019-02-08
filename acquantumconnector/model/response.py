@@ -123,7 +123,7 @@ class AcQuantumResult:
         self.measure_qubits = measure_qubits
         self.finish_time = finish_time
         self.process = process
-        self.data = data
+        self.data = {k: float(v) for k, v in data.items()}
         self.exception = exception
 
     def __str__(self):
