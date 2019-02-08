@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from typing import Any
+from typing import Any, Union
 
 
 class AcQuantumResponse(object):
@@ -92,7 +92,7 @@ class AcQuantumResultResponse:
         self.real_result = real_result
 
     def get_result(self):
-        # type: () -> AcQuantumResult or (AcQuantumResult, AcQuantumResult)
+        # type: () -> Union[AcQuantumResult, (AcQuantumResult, AcQuantumResult)]
         if self.simulated_result:
             if self.real_result:
                 return self.real_result, self.simulated_result
