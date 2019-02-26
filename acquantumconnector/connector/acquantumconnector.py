@@ -286,40 +286,29 @@ class AcQuantumConnector(object):
                 'backend_name': 'SIMULATE',
                 'backend_version': '0.0.1',
                 'n_qubits': 25,
-                'basis_gates': ['XGate'],
-                'gates': [
-                    {'name': 'u1', 'parameters': ['lambda'], 'qasm_def': 'gate u1(lambda) q { U(0,0,lambda) q; }'},
-                    {'name': 'u2', 'parameters': ['phi', 'lambda'],
-                     'qasm_def': 'gate u2(phi,lambda) q { U(pi/2,phi,lambda) q; }'},
-                    {'name': 'u3', 'parameters': ['theta', 'phi', 'lambda'],
-                     'qasm_def': 'gate u3(theta,phi,lambda) q { U(theta,phi,lambda) q; }'},
-                    {'name': 'cx', 'parameters': ['c', 't'], 'qasm_def': 'gate cx c,t { CX c,t; }'},
-                    {'name': 'id', 'parameters': ['a'], 'qasm_def': 'gate id a { U(0,0,0) a; }'},
-                    {'name': 'snapshot', 'parameters': ['slot'], 'qasm_def': 'gate snapshot(slot) q { TODO }'}
-                ],
+                'basis_gates': ['x,y,z,h,s,sdg,t,tdg,rx,ry,rz,u1,u2,u3,cx,crz,ccx'],
+                'gates': [],
                 'local': False,
                 'simulator': True,
                 'conditional': False,
                 'open_pulse': False,
                 'memory': False,
-                'max_shots': 8192
+                'max_shots': 8192,
+                'url': 'http://quantumcomputer.ac.cn'
             },
             {
                 'backend_name': 'REAL',
                 'backend_version': '0.0.1',
                 'n_qubits': 11,
-                'basis_gates': ['XGate'],
-                'gates': [
-                    {'name': 'x',
-                     'parameters': [''],
-                     'qasm_def': ''}
-                ],
+                'basis_gates': ['x,y,z,h,s,sdg,t,tdg,rx,ry,rz,u1,u2,u3,cx,crz,ccx'],
+                'gates': [],
                 'local': False,
                 'simulator': False,
                 'conditional': False,
                 'open_pulse': False,
                 'memory': False,
-                'max_shots': 20000
+                'max_shots': 20000,
+                'url': 'http://quantumcomputer.ac.cn'
             }
         ]
 
