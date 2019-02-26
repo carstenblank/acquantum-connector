@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from typing import Any
+from typing import Any, List
 
 
 class AcQuantumResponse(object):
@@ -87,12 +87,12 @@ class AcQuantumExperiment:
 class AcQuantumResultResponse:
 
     def __init__(self, simulated_result=None, real_result=None):
-        # type: ([AcQuantumResult], [AcQuantumResult]) -> None
+        # type: (List[AcQuantumResult], List[AcQuantumResult]) -> None
         self.simulated_result = simulated_result
         self.real_result = real_result
 
     def get_results(self):
-        # type: () -> [AcQuantumResult]
+        # type: () -> List[AcQuantumResult]
         if self.simulated_result:
             return self.simulated_result
         elif self.real_result:
