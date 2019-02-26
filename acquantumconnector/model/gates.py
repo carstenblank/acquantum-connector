@@ -75,7 +75,7 @@ class SGate(Gate):
 class RxGate(Gate):
 
     def __init__(self, x, y, angle):
-        # type: (int, int, int) -> None
+        # type: (int, int, float) -> None
         super().__init__(x, y)
         if angle not in range(0, 361):
             raise ValueError('Angle is not between 0 - 360')
@@ -85,7 +85,7 @@ class RxGate(Gate):
 class RyGate(Gate):
 
     def __init__(self, x, y, angle):
-        # type: (int, int, int) -> None
+        # type: (int, int, float) -> None
         super().__init__(x, y)
         if angle not in range(0, 361):
             raise ValueError('Angle is not between 0 - 360')
@@ -95,7 +95,7 @@ class RyGate(Gate):
 class RzGate(Gate):
 
     def __init__(self, x, y, angle):
-        # type: (int, int, int) -> None
+        # type: (int, int, float) -> None
         super().__init__(x, y)
         if angle not in range(0, 361):
             raise ValueError('Angle is not between 0 - 360')
