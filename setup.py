@@ -14,7 +14,7 @@ info = {
     'version': version,
     'author': 'Carsten Blank',
     'author_email': 'blank@data-cybernetics.com',
-    'description': '',
+    'description': 'A qiskit provider for the Alibaba\'s quantum computer.',
     'long_description': long_description,
     'url': 'https://github.com/carstenblank/acquantum-connector',
     'packages': [
